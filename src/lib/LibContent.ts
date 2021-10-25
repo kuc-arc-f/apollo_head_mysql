@@ -5,6 +5,26 @@ import LibApiFind from "./LibApiFind"
 import LibApiCreate from "./LibApiCreate"
 
 export default {
+  /* get apikey data */
+  getApikey :async function(apikey: string){
+    try{
+      const prisma = new PrismaClient();
+      const keys = await prisma.apikey.findMany({
+        where: { key: apikey},
+      });
+      if(typeof keys[0] =='undefined'){
+        await prisma.$disconnect();
+        throw new Error('DB error, apikey nothing');
+      }
+      const key = keys[0];
+      await prisma.$disconnect();
+      return key; 
+//console.log(key);      
+    } catch (e) {
+      console.error(e);
+      throw new Error('Error , getApikey');
+    }
+  },
   /* get data items */
   get_items :async function(args: any){
     try {
@@ -12,16 +32,9 @@ export default {
       if(typeof args.apikey =='undefined'){
         throw new Error('Invalid , APIKEY');
       }
-      const prisma = new PrismaClient();
-      const keys = await prisma.apikey.findMany({
-        where: { key: args.apikey},
-      });
-      if(typeof keys[0] =='undefined'){
-        await prisma.$disconnect();
-        throw new Error('DB error, apikey nothing');
-      }
-      const key = keys[0]; 
+      const key = await this.getApikey(args.apikey);
 //console.log(key);
+      const prisma = new PrismaClient();
       const content_name = args.content_name;       
       let items: any[] = []; 
       if(typeof args.user_id !== 'undefined'){
@@ -59,6 +72,7 @@ export default {
       await prisma.$disconnect();      
       return item;
     } catch (err) {
+      console.error(err);
       throw new Error('Error , get_item');
     }          
   },
@@ -70,23 +84,16 @@ export default {
       if(typeof args.apikey =='undefined'){
         throw new Error('Invalid , APIKEY');
       }
+      const key = await this.getApikey(args.apikey);
       const prisma = new PrismaClient();
-      const keys = await prisma.apikey.findMany({
-        where: { key: args.apikey},
-      });
-      if(typeof keys[0] =='undefined'){
-        await prisma.$disconnect();
-        throw new Error('DB error, apikey nothing');
-      }
-      const key = keys[0]; 
-//console.log(key); 
       const count = await prisma.content.count({
         where: { siteId: key.siteId, name: content_name},
       });
       await prisma.$disconnect();     
       return count
     } catch (err) {
-        throw new Error('Error , get_items');
+      console.error(err);
+      throw new Error('Error , get_items');
     }          
   },
   /* add data */
@@ -97,16 +104,8 @@ export default {
       if(typeof args.apikey =='undefined'){
         throw new Error('Invalid , APIKEY');
       }
+      const key = await this.getApikey(args.apikey);
       const prisma = new PrismaClient();
-      const keys = await prisma.apikey.findMany({
-        where: { key: args.apikey},
-      });
-      if(typeof keys[0] =='undefined'){
-        await prisma.$disconnect();
-        throw new Error('DB error, apikey nothing');
-      }
-      const key = keys[0]; 
-//console.log(key);
       const columns = await prisma.column.findMany({
         where: { siteId: key.siteId, name: content_name },
       }); 
@@ -130,6 +129,7 @@ export default {
       await prisma.$disconnect();
       return result
     } catch (err) {
+      console.error(err);
       throw new Error('Error , add_item');
     }          
   },
@@ -142,16 +142,8 @@ export default {
       if(typeof id =='undefined'){
         throw new Error('Invalid , id');
       }
+      const key = await this.getApikey(args.apikey);
       const prisma = new PrismaClient();
-      const keys = await prisma.apikey.findMany({
-        where: { key: args.apikey},
-      });
-      if(typeof keys[0] =='undefined'){
-        await prisma.$disconnect();
-        throw new Error('DB error, apikey nothing');
-      }
-      const key = keys[0]; 
-//console.log(key);
       const columns = await prisma.column.findMany({
         where: { siteId: key.siteId, name: content_name },
       }); 
@@ -170,6 +162,7 @@ export default {
       await prisma.$disconnect();
       return itemOne;
     } catch (err) {
+      console.error(err);
       throw new Error('Error , update_item');
     }          
   },
@@ -177,25 +170,18 @@ export default {
   delete_item :async function(args: any){
     try {
       const id = args.id
-      if(typeof id =='undefined'){
+      if(typeof id === 'undefined'){
         throw new Error('Invalid , id');
       }       
+      const key = await this.getApikey(args.apikey);
       const prisma = new PrismaClient();
-      const keys = await prisma.apikey.findMany({
-        where: { key: args.apikey},
-      });
-      if(typeof keys[0] =='undefined'){
-        await prisma.$disconnect();
-        throw new Error('DB error, apikey nothing');
-      }
-      const key = keys[0]; 
-//console.log(key);
       const result = await prisma.content.delete({
         where: { id: id },
       });
       await prisma.$disconnect();
       return args;
     } catch (err) {
+      console.error(err);
       throw new Error('Error , delete_item');
     }          
   },  
