@@ -14,6 +14,14 @@ export default {
         created_at: item.createdAt,
         values: item.values,
       }
+      let values:any = {};
+//console.log(item.values);
+      let value_items = JSON.parse(item.values || '[]');
+//console.log(value_items);
+      value_items.forEach(function(value_item: any){
+        values[value_item.name] = value_item.value
+      })
+      row.values = JSON.stringify(values);
       ret.push(row)                        
     });        
     return ret
@@ -29,7 +37,6 @@ export default {
       }
       item.values.forEach(function(value_item: any){
         row[value_item.name] = value_item.value
-//            console.log(value_item.name , value_item.value)
       })
       ret.push(row)                        
     });        
@@ -43,11 +50,14 @@ export default {
       created_at: item.createdAt,
       values: item.values,
     }
-    /*
-    item.values.forEach(function(value_item :any){
-      row[value_item.name] = value_item.value
-    })
-    */
+    let values:any = {};
+    let value_items = JSON.parse(item.values || '[]');
+//console.log(value_items);
+    value_items.forEach(function(value_item :any){
+      values[value_item.name] = value_item.value
+    });
+//console.log(values);
+    row.values = JSON.stringify(values);
     ret = row
     return ret
   },

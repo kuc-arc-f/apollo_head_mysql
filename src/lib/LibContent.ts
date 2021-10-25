@@ -112,10 +112,12 @@ export default {
       }); 
       const column = columns[0];
       const coluValues = JSON.parse(column.values || '[]');
-//console.log(coluValues);
-      let values = JSON.parse(args.values || '[]')
+//console.log(args.values);
+      let values = args.values.replace(/'/g , '"')
+//console.log(values);
+      values = JSON.parse(values || '[]');
       const newData = LibApiCreate.valid_post(values, coluValues);
-//      console.log(newData);
+//console.log(newData); 
       const result:any = await prisma.content.create({
         data: {
           name: content_name,
@@ -155,7 +157,8 @@ export default {
       }); 
       const column = columns[0];
       const coluValues = JSON.parse(column.values || '[]');
-      let values = JSON.parse(args.values || '[]')
+      let values = args.values.replace(/'/g , '"');
+      values = JSON.parse(values || '[]')
       const newData = LibApiCreate.valid_post(values, coluValues);      
 //console.log( newData );
       const itemOne = await prisma.content.update({
