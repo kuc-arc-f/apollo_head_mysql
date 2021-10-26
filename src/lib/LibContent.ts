@@ -59,7 +59,36 @@ export default {
       console.error(err);
       throw new Error('Error , get_items');
     }          
-  },    
+  }, 
+  /* get item, user_id select*/ 
+  getItemsUid :async function(args: any){
+    try {
+//console.log(args )
+      if(typeof args.apikey =='undefined'){
+        throw new Error('nothing , APIKEY');
+      }
+      if(typeof args.user_id === 'undefined'){
+        throw new Error('nothing , user_id');
+      }
+      const key = await this.getApikey(args.apikey);
+//console.log(key);
+      const prisma = new PrismaClient();
+      const content_name = args.content_name;       
+      //let items: any[] = []; 
+      let items: any[] = await prisma.content.findMany({
+        where: {
+          siteId: key.siteId, name: content_name, userId: args.user_id,
+        },
+      });
+      items = LibApiFind.convert_values(items) 
+//console.log( items )
+      await prisma.$disconnect();
+      return items
+    } catch (err) {
+      console.error(err);
+      throw new Error('Error , getItemsUid');
+    }          
+  },
   /* get one record */
   get_item :async function(id: number){
     try {
@@ -111,12 +140,10 @@ export default {
       }); 
       const column = columns[0];
       const coluValues = JSON.parse(column.values || '[]');
-//console.log(args.values);
       let values = args.values.replace(/'/g , '"')
 //console.log(values);
       values = JSON.parse(values || '[]');
       const newData = LibApiCreate.valid_post(values, coluValues);
-//console.log(newData); 
       const result:any = await prisma.content.create({
         data: {
           name: content_name,

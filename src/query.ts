@@ -3,7 +3,7 @@ export const GQL_QUERY = `
   type Query {
     hello: String
     contents(apikey: String, content_name: String): [Content]
-    contents_uid(site_id: String, content_name: String, user_id: String
+    contents_uid(apikey: String, content_name: String, user_id: Int
     ): [Content]
     content(id: Int): Content
     content_count(apikey: String, content_name: String): Int
