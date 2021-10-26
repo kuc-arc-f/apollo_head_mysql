@@ -21,7 +21,10 @@ const resolvers = {
     },
     contents_uid: async(parent: any, args: any, context: any, info: any) => {
       return await LibContent.getItemsUid(args);
-    },  
+    }, 
+    contents_page: async(parent: any, args: any, context: any, info: any) => {
+      return await LibContent.getItemsPage(args);
+    }, 
     content_count: async (parent: any, args: any, context: any, info: any) => {
       return await LibContent.get_count(args);
     },      

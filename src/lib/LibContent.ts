@@ -82,6 +82,40 @@ export default {
       throw new Error('Error , getItemsUid');
     }          
   },
+  /* get items, page select */
+  getItemsPage :async function(args: any){
+    try {
+//console.log(args )
+      if(typeof args.apikey =='undefined'){
+        throw new Error('Invalid , APIKEY');
+      }
+      if(typeof args.skip =='undefined'){
+        throw new Error('Nothing, skip');
+      }
+      if(typeof args.take =='undefined'){
+        throw new Error('Nothing, take');
+      }            
+      const key = await this.getApikey(args.apikey);
+//console.log(key);
+      const prisma = new PrismaClient();
+      const content_name = args.content_name;       
+      let items: any[] = await prisma.content.findMany({
+        where: { siteId: key.siteId, name: content_name},
+        orderBy: [
+          { id: 'desc', },
+        ],
+        skip: args.skip,
+        take: args.take,
+      });        
+      items = LibApiFind.convert_values(items) 
+//console.log( items )
+      await prisma.$disconnect();
+      return items
+    } catch (err) {
+      console.error(err);
+      throw new Error('Error , get_items');
+    }          
+  },
   /* get one record */
   get_item :async function(id: number){
     try {
