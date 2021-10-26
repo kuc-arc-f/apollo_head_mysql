@@ -36,21 +36,12 @@ export default {
 //console.log(key);
       const prisma = new PrismaClient();
       const content_name = args.content_name;       
-      let items: any[] = []; 
-      if(typeof args.user_id !== 'undefined'){
-        const whereUid ={
-          site_id: args.site_id, name: args.content_name ,
-          user_id: args.user_id
-        }
-        //do
-      }else{
-        const where ={
-          site_id: args.site_id, name: args.content_name
-        }
-        items = await prisma.content.findMany({
-          where: { siteId: key.siteId, name: content_name},
-        });        
-      }      
+      let items: any[] = await prisma.content.findMany({
+        where: { siteId: key.siteId, name: content_name},
+        orderBy: [
+          { id: 'desc', },
+        ],
+      });        
       items = LibApiFind.convert_values(items) 
 //console.log( items )
       await prisma.$disconnect();
@@ -74,11 +65,13 @@ export default {
 //console.log(key);
       const prisma = new PrismaClient();
       const content_name = args.content_name;       
-      //let items: any[] = []; 
       let items: any[] = await prisma.content.findMany({
         where: {
           siteId: key.siteId, name: content_name, userId: args.user_id,
         },
+        orderBy: [
+          { id: 'desc', },
+        ],        
       });
       items = LibApiFind.convert_values(items) 
 //console.log( items )
